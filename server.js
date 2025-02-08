@@ -1,7 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const fs = require("fs");
-const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,18 +14,10 @@ app.post("/track", (req, res) => {
     return res.status(400).json({ message: "Missing tracking data" });
   }
 
-  const logEntry = `${timestamp} - User: ${userId}, Fingerprint: ${fingerprint}, Page: ${pagePath}, Time Spent: ${timeSpent}s\n`;
+  // Log data to Render logs instead of a file
+  console.log(`[TRACKING] ${timestamp} | User: ${userId}, Fingerprint: ${fingerprint}, Page: ${pagePath}, Time Spent: ${timeSpent}s`);
 
-  // **Ensure the directory exists**
-  const logFilePath = path.resolve(__dirname, "tracking.log");
-
-  fs.appendFile(logFilePath, logEntry, (err) => {
-    if (err) {
-      console.error("Failed to log data:", err);
-      return res.status(500).json({ message: "Error logging data" });
-    }
-    res.json({ message: "Tracked successfully" });
-  });
+  res.json({ message: "Tracked successfully" });
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
